@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tackle — Compramos tus camisetas</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FFFFFF;
+  --ink:#0F0F0F;
+  --mid:#555050;
+  --border:#E0DBDA;
+  --light:#F6F4F2;
+  --red:#FF0000;
+  --f:'Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:var(--f);
+  letter-spacing:-0.055em;
+  line-height:1.28;
+  overflow-x:hidden;
+  max-width:100vw;
+}
+
+/* CURSOR */
+.cur{position:fixed;width:9px;height:9px;background:var(--ink);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .18s,height .18s,background .18s}
+.cur.h{width:18px;height:18px;background:var(--red)}
+@media(hover:none){.cur{display:none}}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  height:64px;display:flex;align-items:center;padding:0 32px;
+  background:rgba(255,255,255,.93);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{font-size:18px;font-weight:800;letter-spacing:-0.07em;text-transform:uppercase;color:var(--ink);text-decoration:none;flex:1}
+.nav-center{position:absolute;left:50%;transform:translateX(-50%);display:flex;gap:32px}
+.nav-center a{
+  font-size:12px;font-weight:500;letter-spacing:-0.04em;
+  color:var(--ink);text-decoration:none;opacity:.55;transition:opacity .2s;
+  position:relative;
+}
+.nav-center a::after{content:'';position:absolute;bottom:-3px;left:0;right:0;height:1px;background:var(--ink);transform:scaleX(0);transition:transform .2s;transform-origin:left}
+.nav-center a:hover{opacity:1}
+.nav-center a:hover::after{transform:scaleX(1)}
+.nav-cta{
+  margin-left:auto;background:var(--red);color:#fff;
+  font-size:12px;font-weight:700;letter-spacing:-0.03em;
+  padding:10px 22px;border-radius:3px;text-decoration:none;
+  transition:opacity .18s,transform .15s;white-space:nowrap;
+}
+.nav-cta:hover{opacity:.88;transform:translateY(-1px)}
+@media(max-width:680px){.nav-center{display:none}.nav-logo{font-size:16px}}
+
+/* HERO */
+.hero{
+  min-height:100svh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:88px 20px 64px;
+  border-bottom:1px solid var(--border);
+  overflow:hidden;
+}
+.hero-tag{
+  font-size:11px;font-weight:600;letter-spacing:-0.04em;
+  color:var(--red);margin-bottom:18px;
+  opacity:0;animation:fu .7s .08s forwards;
+}
+.hero-h1{
+  font-size:clamp(44px,9vw,104px);
+  font-weight:800;line-height:.88;letter-spacing:-0.065em;
+  margin-bottom:22px;max-width:840px;
+  opacity:0;animation:fu .85s .2s forwards;
+}
+.hero-sub{
+  font-size:clamp(17px,2.2vw,22px);
+  line-height:1.38;font-weight:500;letter-spacing:-0.05em;
+  color:var(--ink);max-width:460px;margin:0 auto 36px;
+  opacity:0;animation:fu .85s .32s forwards;
+}
+.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fu .85s .44s forwards}
+
+/* BTNS */
+.btn{
+  display:inline-block;font-family:var(--f);
+  font-size:12px;font-weight:700;letter-spacing:-0.03em;
+  padding:12px 26px;text-decoration:none;border:none;
+  cursor:none;transition:all .18s;border-radius:3px;
+}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{opacity:.88;transform:translateY(-1px)}
+.btn-out{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn-out:hover{background:var(--ink);color:#fff;transform:translateY(-1px)}
+.btn-dark{background:var(--ink);color:#fff}
+.btn-dark:hover{background:#222;transform:translateY(-1px)}
+.btn-w{background:#fff;color:var(--ink)}
+.btn-w:hover{opacity:.9;transform:translateY(-1px)}
+.btn-wo{background:transparent;color:rgba(255,255,255,.65);border:1.5px solid rgba(255,255,255,.2)}
+.btn-wo:hover{color:#fff;border-color:rgba(255,255,255,.6);transform:translateY(-1px)}
+@media(hover:none){.btn{cursor:pointer}}
+
+/* TICKER */
+.ticker{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:10px 0;overflow:hidden}
+.ticker-t{display:flex;width:max-content;animation:ticker 26s linear infinite}
+.ticker-i{font-size:11px;font-weight:600;letter-spacing:-0.04em;color:var(--ink);padding:0 22px;white-space:nowrap}
+.t-star{color:var(--red);font-size:10px;padding:0 2px}
+@keyframes ticker{to{transform:translateX(-50%)}}
+
+/* SECTION */
+.s{max-width:880px;margin:0 auto;padding:72px 20px;border-bottom:1px solid var(--border);width:100%}
+.s-sm{padding:56px 20px}
+.s-lbl{font-size:11px;font-weight:700;letter-spacing:-0.04em;color:var(--red);margin-bottom:12px;text-align:center;display:block}
+.s-h{font-size:clamp(30px,4.5vw,52px);font-weight:800;line-height:.9;letter-spacing:-0.06em;text-align:center;margin-bottom:10px}
+.s-p{font-size:14px;line-height:1.48;color:var(--mid);text-align:center;max-width:420px;margin:0 auto;letter-spacing:-0.04em;font-weight:500}
+.s-head{margin-bottom:40px}
+
+/* CONDITIONS */
+.cg{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border)}
+.ci{background:var(--bg);padding:28px 24px;display:flex;flex-direction:column;gap:8px;transition:background .2s}
+.ci:hover{background:var(--light)}
+.ci-n{font-size:10px;font-weight:700;letter-spacing:-0.04em;color:var(--red)}
+.ci-t{font-size:16px;font-weight:700;letter-spacing:-0.05em;line-height:1.05}
+.ci-d{font-size:13px;line-height:1.52;color:var(--mid);letter-spacing:-0.04em;font-weight:500}
+@media(max-width:600px){.cg{grid-template-columns:1fr}}
+
+/* STATS */
+.stats-wrap{max-width:880px;margin:0 auto;border-bottom:1px solid var(--border);width:100%}
+.stats-inner{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{
+  padding:48px 16px;text-align:center;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  position:relative;overflow:hidden;transition:background .22s;
+}
+.stat:last-child{border-right:none}
+.stat:hover{background:var(--light)}
+.stat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--red);transform:scaleX(0);transition:transform .35s cubic-bezier(.16,1,.3,1);transform-origin:left}
+.stat:hover::after{transform:scaleX(1)}
+.stat-n{font-size:clamp(42px,5.5vw,62px);font-weight:800;letter-spacing:-0.07em;line-height:1;color:var(--ink)}
+.stat-n sup{font-size:.38em;color:var(--red);vertical-align:super;letter-spacing:0;font-weight:800}
+.stat-l{font-size:11px;font-weight:600;letter-spacing:-0.04em;color:var(--mid)}
+@media(max-width:600px){
+  .stats-inner{grid-template-columns:repeat(2,1fr)}
+  .stat{border-bottom:1px solid var(--border);padding:32px 12px}
+  .stat:nth-child(2){border-right:none}
+  .stat:nth-child(3){border-right:1px solid var(--border);border-bottom:none}
+  .stat:last-child{border-right:none;border-bottom:none}
+}
+
+/* ACORDEONES */
+.acc{display:flex;flex-direction:column}
+.acc-i{border-bottom:1px solid var(--border)}
+.acc-i:first-child{border-top:1px solid var(--border)}
+.acc-head{display:flex;align-items:center;justify-content:space-between;padding:18px 0;cursor:none;gap:16px;transition:color .18s}
+.acc-head:hover .acc-title{color:var(--red)}
+.acc-title{font-size:clamp(15px,2vw,17px);font-weight:700;letter-spacing:-0.05em;line-height:1.15;transition:color .18s}
+.acc-icon{
+  width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:all .28s cubic-bezier(.16,1,.3,1);font-size:14px;font-weight:700;color:var(--ink);
+  line-height:1;
+}
+.acc-i.open .acc-icon{background:var(--ink);border-color:var(--ink);color:#fff;transform:rotate(45deg)}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .42s cubic-bezier(.16,1,.3,1)}
+.acc-i.open .acc-body{max-height:160px}
+.acc-inner{padding:2px 0 18px;font-size:13px;line-height:1.58;color:var(--mid);letter-spacing:-0.04em;font-weight:500;max-width:580px}
+@media(hover:none){.acc-head{cursor:pointer}}
+
+/* SOCIAL SCROLL */
+.sp-wrap{overflow:hidden;margin:0 -20px;padding:4px 0}
+.sp-track{display:flex;gap:12px;animation:spscroll 30s linear infinite;width:max-content;padding:4px 20px}
+.sp-track:hover{animation-play-state:paused}
+.sp-card{
+  flex-shrink:0;width:252px;background:var(--bg);
+  border:1px solid var(--border);border-radius:4px;
+  padding:18px;display:flex;flex-direction:column;gap:11px;
+  transition:border-color .22s,transform .22s,box-shadow .22s;
+}
+.sp-card:hover{border-color:#999;transform:translateY(-4px);box-shadow:0 10px 28px rgba(0,0,0,.07)}
+.sp-img{width:100%;aspect-ratio:4/3;background:var(--light);border-radius:2px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;overflow:hidden}
+.sp-img-lbl{font-size:10px;font-weight:600;letter-spacing:-0.03em;color:var(--mid)}
+.sp-stars{font-size:12px;letter-spacing:1px;color:var(--ink)}
+.sp-txt{font-size:12px;line-height:1.6;color:var(--mid);letter-spacing:-0.04em;font-weight:500;font-style:normal}
+.sp-auth{font-size:11px;font-weight:700;letter-spacing:-0.04em}
+.sp-det{font-size:10px;color:var(--mid);letter-spacing:-0.02em;font-weight:500}
+@keyframes spscroll{to{transform:translateX(-50%)}}
+
+/* TRUST */
+.trust-g{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
+.trust-i{background:var(--bg);padding:26px 22px;display:flex;flex-direction:column;gap:7px;transition:background .2s}
+.trust-i:hover{background:var(--light)}
+.trust-ico{font-size:13px;color:var(--red)}
+.trust-t{font-size:15px;font-weight:700;letter-spacing:-0.05em;line-height:1.05}
+.trust-d{font-size:12px;line-height:1.55;color:var(--mid);letter-spacing:-0.04em;font-weight:500}
+@media(max-width:600px){.trust-g{grid-template-columns:1fr}}
+
+/* ABOUT */
+.ab-g{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
+.ab-text h2{font-size:clamp(26px,3.8vw,40px);font-weight:800;letter-spacing:-0.06em;line-height:.92;margin-bottom:14px}
+.ab-text p{font-size:13px;line-height:1.56;color:var(--mid);letter-spacing:-0.04em;margin-bottom:10px;font-weight:500}
+.ab-img{aspect-ratio:4/5;background:var(--light);border:1px solid var(--border);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
+.ab-lbl{font-size:10px;font-weight:600;letter-spacing:-0.03em;color:var(--mid)}
+@media(max-width:600px){.ab-g{grid-template-columns:1fr}.ab-img{display:none}}
+
+/* CTA BAND */
+.cta-band{background:var(--ink);color:#fff;padding:72px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:18px}
+.cta-band h2{font-size:clamp(32px,5.5vw,66px);font-weight:800;letter-spacing:-0.065em;line-height:.9}
+.cta-band p{font-size:14px;color:rgba(255,255,255,.55);max-width:360px;line-height:1.5;letter-spacing:-0.04em;font-weight:500}
+.cta-btn-group{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+
+/* CTA STRIP */
+.cta-strip{background:var(--light);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:28px 20px;display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;text-align:center}
+.cta-strip p{font-size:14px;font-weight:700;letter-spacing:-0.05em}
+
+/* FORM */
+.form-sec{max-width:520px;margin:0 auto;padding:72px 20px 88px;width:100%}
+.form-head{text-align:center;margin-bottom:40px}
+.form-head h2{font-size:clamp(28px,5vw,44px);font-weight:800;letter-spacing:-0.06em;line-height:.92;margin-bottom:9px}
+.form-head p{font-size:14px;color:var(--mid);line-height:1.5;letter-spacing:-0.04em;font-weight:500}
+
+.prog{display:flex;gap:4px;margin-bottom:34px;justify-content:center}
+.prog-d{height:2px;flex:1;max-width:52px;background:var(--border);border-radius:2px;transition:background .3s}
+.prog-d.done{background:var(--mid)}
+.prog-d.act{background:var(--ink)}
+
+.tf-step{display:none;flex-direction:column;gap:20px;animation:fu .3s ease}
+.tf-step.on{display:flex}
+.tq{font-size:clamp(20px,3.5vw,28px);font-weight:700;letter-spacing:-0.055em;line-height:1.1}
+.tq-n{font-size:10px;font-weight:700;letter-spacing:-0.03em;color:var(--red);display:block;margin-bottom:8px}
+
+.ti{width:100%;background:transparent;border:none;border-bottom:1.5px solid var(--border);padding:11px 0;font-size:18px;font-family:var(--f);letter-spacing:-0.05em;color:var(--ink);outline:none;transition:border-color .2s;font-weight:500}
+.ti:focus{border-color:var(--ink)}
+.ti::placeholder{color:var(--border);font-weight:400}
+
+.to-w{display:flex;flex-direction:column;gap:6px}
+.to{display:flex;align-items:center;gap:12px;padding:12px 15px;border:1.5px solid var(--border);border-radius:3px;cursor:none;transition:all .15s;font-size:13px;letter-spacing:-0.04em;font-weight:600;background:transparent}
+.to:hover{border-color:var(--ink);background:var(--light)}
+.to.on{border-color:var(--ink);background:var(--ink);color:#fff}
+.to-k{font-size:9px;font-weight:700;letter-spacing:-0.02em;border:1.5px solid var(--border);padding:3px 7px;border-radius:2px;flex-shrink:0;color:var(--mid)}
+.to.on .to-k{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.55)}
+@media(hover:none){.to{cursor:pointer}}
+
+.tn{display:flex;align-items:center;gap:12px;margin-top:2px}
+.tb{background:var(--ink);color:#fff;padding:11px 24px;border-radius:3px;font-size:11px;font-weight:700;letter-spacing:-0.02em;border:none;cursor:none;font-family:var(--f);transition:all .18s}
+.tb:hover{background:var(--red);transform:translateY(-1px)}
+@media(hover:none){.tb{cursor:pointer}}
+.t-hint{font-size:10px;color:var(--border);letter-spacing:-0.02em;font-weight:600}
+
+.tsuc{display:none;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:44px 20px;border:1.5px solid var(--border);border-radius:4px;animation:fu .45s ease}
+.tsuc.on{display:flex}
+.tsuc-ico{width:40px;height:40px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center}
+.tsuc-ico svg{width:16px;height:16px}
+.tsuc h3{font-size:28px;font-weight:800;letter-spacing:-0.06em;line-height:1}
+.tsuc p{font-size:13px;color:var(--mid);line-height:1.55;letter-spacing:-0.04em;max-width:300px;font-weight:500}
+
+/* FAQ */
+.faq-s{max-width:880px;margin:0 auto;padding:72px 20px;border-bottom:1px solid var(--border);width:100%}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:20px 20px;max-width:880px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;width:100%}
+.f-logo{font-size:14px;font-weight:800;letter-spacing:-0.06em;text-transform:uppercase}
+.f-r{font-size:11px;color:var(--mid);letter-spacing:-0.04em;font-weight:500}
+@media(max-width:500px){footer{flex-direction:column;gap:6px;text-align:center}}
+
+/* ANIMS */
+@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.rv{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+.rv.v{opacity:1;transform:none}
+.d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}.d4{transition-delay:.28s}
+
+/* MOBILE SPECIFICS */
+@media(max-width:600px){
+  .s{padding:52px 20px}
+  .s-sm{padding:44px 20px}
+  .hero{padding:80px 20px 56px}
+  .hero-sub{font-size:17px}
+  .s-h{font-size:clamp(28px,8vw,40px)}
+  .acc-title{font-size:16px}
+  .form-sec{padding:52px 20px 72px}
+  .cta-band{padding:56px 20px}
+  .cta-strip{gap:14px}
+}
+</style>
+</head>
+<body>
+
+<div class="cur" id="cur"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo he" href="#">Tackle</a>
+  <div class="nav-center">
+    <a class="he" href="#como-funciona">Cómo funciona</a>
+    <a class="he" href="#para-quien">Para quién</a>
+    <a class="he" href="#nosotros">Nosotros</a>
+  </div>
+  <a class="nav-cta he" href="#formulario">Vender →</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-tag">Ya hemos comprado más de 200 camisetas. La tuya puede ser la siguiente.</span>
+  <h1 class="hero-h1">¿Tienes camisetas<br>guardadas?<br>Te las compramos.</h1>
+  <p class="hero-sub">Sin que tengas que saber cuánto valen. Valoramos, hacemos una oferta y pagamos al momento.</p>
+  <div class="hero-btns">
+    <a class="btn btn-red he" href="#formulario">Quiero vender las mías</a>
+    <a class="btn btn-out he" href="#como-funciona">Cómo funciona</a>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-t">
+    <span class="ticker-i">Pago inmediato</span><span class="t-star">★</span>
+    <span class="ticker-i">Envío gratis</span><span class="t-star">★</span>
+    <span class="ticker-i">Factura disponible</span><span class="t-star">★</span>
+    <span class="ticker-i">Originales o réplicas</span><span class="t-star">★</span>
+    <span class="ticker-i">+200 compradas</span><span class="t-star">★</span>
+    <span class="ticker-i">Bizum · Efectivo · Transferencia</span><span class="t-star">★</span>
+    <span class="ticker-i">Valoración gratis</span><span class="t-star">★</span>
+    <span class="ticker-i">Sin compromiso</span><span class="t-star">★</span>
+    <span class="ticker-i">Pago inmediato</span><span class="t-star">★</span>
+    <span class="ticker-i">Envío gratis</span><span class="t-star">★</span>
+    <span class="ticker-i">Factura disponible</span><span class="t-star">★</span>
+    <span class="ticker-i">Originales o réplicas</span><span class="t-star">★</span>
+    <span class="ticker-i">+200 compradas</span><span class="t-star">★</span>
+    <span class="ticker-i">Bizum · Efectivo · Transferencia</span><span class="t-star">★</span>
+    <span class="ticker-i">Valoración gratis</span><span class="t-star">★</span>
+    <span class="ticker-i">Sin compromiso</span><span class="t-star">★</span>
+  </div>
+</div>
+
+<!-- COMO FUNCIONA -->
+<div class="s rv" id="como-funciona">
+  <div class="s-head">
+    <span class="s-lbl">Así funciona</span>
+    <h2 class="s-h rv">Rápido, claro<br>y sin sorpresas</h2>
+    <p class="s-p rv d1" style="margin-top:10px">Rellena el formulario, nos mandas fotos y te hacemos una oferta. Si te encaja, cerramos y pagamos.</p>
+  </div>
+  <div class="cg rv d2">
+    <div class="ci he">
+      <div class="ci-n">01</div>
+      <div class="ci-t">Rellenas el formulario</div>
+      <div class="ci-d">Cuéntanos qué tienes. Cuántas camisetas, de qué equipo, en qué estado. Dos minutos.</div>
+    </div>
+    <div class="ci he">
+      <div class="ci-n">02</div>
+      <div class="ci-t">Te hacemos una oferta</div>
+      <div class="ci-d">En menos de 48h te contactamos por WhatsApp con valoración y precio. Sin compromiso.</div>
+    </div>
+    <div class="ci he">
+      <div class="ci-n">03</div>
+      <div class="ci-t">Cerramos y pagamos</div>
+      <div class="ci-d">Si te encaja, acordamos envío o entrega en mano. Pagamos al momento: Bizum, transferencia o efectivo.</div>
+    </div>
+    <div class="ci he">
+      <div class="ci-n">04</div>
+      <div class="ci-t">El envío lo cubrimos nosotros</div>
+      <div class="ci-d">Si no podemos vernos en persona, mandamos recogida a tu puerta. Sin coste para ti.</div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA STRIP 1 -->
+<div class="cta-strip rv">
+  <p>¿Ya tienes claro que quieres vender? No hace falta leer más.</p>
+  <a class="btn btn-red he" href="#formulario">Empezar ahora →</a>
+</div>
+
+<!-- PARA QUIEN — ACORDEONES -->
+<div class="s rv" id="para-quien">
+  <div class="s-head">
+    <span class="s-lbl">¿Esto es para ti?</span>
+    <h2 class="s-h rv">Si tienes camisetas<br>guardadas, probablemente sí</h2>
+    <p class="s-p rv d1" style="margin-top:10px">No hace falta saber nada del mercado. Solo necesitas tener camisetas que no usas.</p>
+  </div>
+  <div class="acc rv d2">
+    <div class="acc-i">
+      <div class="acc-head he" onclick="tog(this)">
+        <span class="acc-title">Tienes cajas de camisetas que no abres desde hace años</span>
+        <span class="acc-icon">+</span>
+      </div>
+      <div class="acc-body"><div class="acc-inner">Están ahí, ocupando sitio. No sabes si valen algo o no. Mándanos fotos y te decimos en menos de 48 horas. Sin moverte de casa.</div></div>
+    </div>
+    <div class="acc-i">
+      <div class="acc-head he" onclick="tog(this)">
+        <span class="acc-title">No tienes ni idea de cuánto vale lo que tienes</span>
+        <span class="acc-icon">+</span>
+      </div>
+      <div class="acc-body"><div class="acc-inner">La mayoría de gente que nos escribe está exactamente en esta situación. Valoramos, te explicamos por qué y tú decides si te interesa la oferta. Sin presión.</div></div>
+    </div>
+    <div class="acc-i">
+      <div class="acc-head he" onclick="tog(this)">
+        <span class="acc-title">Un familiar tenía una colección y ya no sabe qué hacer con ella</span>
+        <span class="acc-icon">+</span>
+      </div>
+      <div class="acc-body"><div class="acc-inner">Nos llegan muchas camisetas así. Si alguien en casa tiene una colección parada, podemos echarle un vistazo y valorar el lote entero.</div></div>
+    </div>
+    <div class="acc-i">
+      <div class="acc-head he" onclick="tog(this)">
+        <span class="acc-title">Tienes una o dos que crees que pueden valer algo</span>
+        <span class="acc-icon">+</span>
+      </div>
+      <div class="acc-body"><div class="acc-inner">No hace falta tener un lote. Una sola camiseta de la temporada correcta puede ser interesante. Cuéntanos cuál es y lo miramos.</div></div>
+    </div>
+    <div class="acc-i">
+      <div class="acc-head he" onclick="tog(this)">
+        <span class="acc-title">Quieres liquidar una colección entera de golpe</span>
+        <span class="acc-icon">+</span>
+      </div>
+      <div class="acc-body"><div class="acc-inner">Preferimos comprar lotes. Si tienes volumen, la oferta mejora. Adaptamos el proceso a lo que tengas y lo cerramos en una sola operación.</div></div>
+    </div>
+    <div class="acc-i">
+      <div class="acc-head he" onclick="tog(this)">
+        <span class="acc-title">Compraste algo que no era lo que esperabas</span>
+        <span class="acc-icon">+</span>
+      </div>
+      <div class="acc-body"><div class="acc-inner">Pasa más de lo que parece. Si tienes una camiseta que compraste y no querías, podemos valorarla igualmente y hacerte una oferta.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TRUST -->
+<div class="s rv s-sm">
+  <div class="s-head">
+    <span class="s-lbl">Por qué elegirnos</span>
+    <h2 class="s-h rv">Seguro, directo<br>y sin historia</h2>
+  </div>
+  <div class="trust-g rv d1">
+    <div class="trust-i he">
+      <div class="trust-ico">★</div>
+      <div class="trust-t">Pago garantizado</div>
+      <div class="trust-d">Acordamos precio antes de que muevas nada. Cuando cerramos, se paga. Sin demoras.</div>
+    </div>
+    <div class="trust-i he">
+      <div class="trust-ico">★</div>
+      <div class="trust-t">Valoración transparente</div>
+      <div class="trust-d">Te explicamos por qué ofrecemos lo que ofrecemos. No es un número salido de la nada.</div>
+    </div>
+    <div class="trust-i he">
+      <div class="trust-ico">★</div>
+      <div class="trust-t">Sin compromiso</div>
+      <div class="trust-d">Puedes pedir valoración y no vender. No te llamamos diez veces. Si no te interesa, no pasa nada.</div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-wrap rv">
+  <div class="stats-inner">
+    <div class="stat rv he">
+      <div class="stat-n" id="cnt">0<sup>+</sup></div>
+      <div class="stat-l">Camisetas compradas</div>
+    </div>
+    <div class="stat rv d1 he">
+      <div class="stat-n">48<sup>h</sup></div>
+      <div class="stat-l">Respuesta máxima</div>
+    </div>
+    <div class="stat rv d2 he">
+      <div class="stat-n">0<sup>€</sup></div>
+      <div class="stat-l">Envío para ti</div>
+    </div>
+    <div class="stat rv d3 he">
+      <div class="stat-n">100<sup>%</sup></div>
+      <div class="stat-l">Pagos completados</div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA STRIP 2 -->
+<div class="cta-strip rv">
+  <p>Más de 200 operaciones cerradas. La siguiente puede ser la tuya.</p>
+  <a class="btn btn-dark he" href="#formulario">Vender mis camisetas →</a>
+</div>
+
+<!-- SOCIAL PROOF -->
+<div style="padding:72px 0;border-bottom:1px solid var(--border);overflow:hidden;width:100%">
+  <div style="max-width:880px;margin:0 auto;padding:0 20px 34px">
+    <span class="s-lbl rv">Lo que dicen</span>
+    <h2 class="s-h rv" style="text-align:left">Gente que tenía<br>camisetas paradas</h2>
+  </div>
+  <div class="sp-wrap rv d1">
+    <div class="sp-track">
+      <div class="sp-card he"><div class="sp-img"><span style="font-size:18px">📦</span><span class="sp-img-lbl">Foto del lote</span></div><div class="sp-stars">★★★★★</div><div class="sp-txt">"Tenía 12 camisetas de los 90 en cajas. Pensé que no valían nada. En dos días lo cerramos y me pagaron al momento."</div><div><div class="sp-auth">Miguel A.</div><div class="sp-det">Lote de 12 camisetas</div></div></div>
+      <div class="sp-card he"><div class="sp-img"><span style="font-size:18px">👕</span><span class="sp-img-lbl">Camiseta vintage</span></div><div class="sp-stars">★★★★★</div><div class="sp-txt">"No tenía ni idea de lo que tenía. Me explicaron todo, me mandaron referencias y la oferta fue justa."</div><div><div class="sp-auth">Lorena P.</div><div class="sp-det">Colección de su padre</div></div></div>
+      <div class="sp-card he"><div class="sp-img"><span style="font-size:18px">🏷</span><span class="sp-img-lbl">Detalle etiqueta</span></div><div class="sp-stars">★★★★★</div><div class="sp-txt">"Una del Barça del 99 que llevaba años en el armario. La oferta fue razonable y el envío no me costó nada."</div><div><div class="sp-auth">Jordi M.</div><div class="sp-det">Camiseta única</div></div></div>
+      <div class="sp-card he"><div class="sp-img"><span style="font-size:18px">📦</span><span class="sp-img-lbl">Foto del lote</span></div><div class="sp-stars">★★★★★</div><div class="sp-txt">"Mi hijo tenía una colección entera que ya no usaba. Lo gestionamos todo por WhatsApp. Muy sencillo."</div><div><div class="sp-auth">Carmen R.</div><div class="sp-det">Colección completa</div></div></div>
+      <div class="sp-card he"><div class="sp-img"><span style="font-size:18px">👕</span><span class="sp-img-lbl">Detalle frontal</span></div><div class="sp-stars">★★★★★</div><div class="sp-txt">"No sabía si valía algo. Me respondieron en pocas horas con una valoración bien explicada."</div><div><div class="sp-auth">Marcos T.</div><div class="sp-det">3 camisetas vintage</div></div></div>
+      <!-- loop -->
+      <div class="sp-card he"><div class="sp-img"><span style="font-size:18px">📦</span><span class="sp-img-lbl">Foto del lote</span></div><div class="sp-stars">★★★★★</div><div class="sp-txt">"Tenía 12 camisetas de los 90 en cajas. Pensé que no valían nada. En dos días lo cerramos y me pagaron al momento."</div><div><div class="sp-auth">Miguel A.</div><div class="sp-det">Lote de 12 camisetas</div></div></div>
+      <div class="sp-card he"><div class="sp-img"><span style="font-size:18px">👕</span><span class="sp-img-lbl">Camiseta vintage</span></div><div class="sp-stars">★★★★★</div><div class="sp-txt">"No tenía ni idea de lo que tenía. Me explicaron todo, me mandaron referencias y la oferta fue justa."</div><div><div class="sp-auth">Lorena P.</div><div class="sp-det">Colección de su padre</div></div></div>
+      <div class="sp-card he"><div class="sp-img"><span style="font-size:18px">🏷</span><span class="sp-img-lbl">Detalle etiqueta</span></div><div class="sp-stars">★★★★★</div><div class="sp-txt">"Una del Barça del 99 que llevaba años en el armario. La oferta fue razonable y el envío no me costó nada."</div><div><div class="sp-auth">Jordi M.</div><div class="sp-det">Camiseta única</div></div></div>
+      <div class="sp-card he"><div class="sp-img"><span style="font-size:18px">📦</span><span class="sp-img-lbl">Foto del lote</span></div><div class="sp-stars">★★★★★</div><div class="sp-txt">"Mi hijo tenía una colección entera que ya no usaba. Lo gestionamos todo por WhatsApp. Muy sencillo."</div><div><div class="sp-auth">Carmen R.</div><div class="sp-det">Colección completa</div></div></div>
+      <div class="sp-card he"><div class="sp-img"><span style="font-size:18px">👕</span><span class="sp-img-lbl">Detalle frontal</span></div><div class="sp-stars">★★★★★</div><div class="sp-txt">"No sabía si valía algo. Me respondieron en pocas horas con una valoración bien explicada."</div><div><div class="sp-auth">Marcos T.</div><div class="sp-det">3 camisetas vintage</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="s rv" id="nosotros">
+  <span class="s-lbl">Sobre nosotros</span>
+  <div class="ab-g rv d1">
+    <div class="ab-text">
+      <h2>Compramos<br>camisetas.<br>Eso es todo.</h2>
+      <p>Somos un par de personas que llevamos años en esto. Sabemos lo que vale cada pieza y por qué.</p>
+      <p>No somos una plataforma ni un marketplace. Somos nosotros, con criterio propio. Por eso el proceso es rápido y sin burocracia.</p>
+      <p>Operamos en toda España. En Madrid podemos quedar en persona si prefieres.</p>
+      <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+        <a class="btn btn-red he" href="#formulario">Vender mis camisetas</a>
+        <a class="btn btn-out he" href="https://wa.me/34600000000" target="_blank">WhatsApp directo</a>
+      </div>
+    </div>
+    <div class="ab-img">
+      <span style="font-size:22px">📸</span>
+      <span class="ab-lbl">Foto del equipo</span>
+    </div>
+  </div>
+</div>
+
+<!-- CTA BAND -->
+<div class="cta-band">
+  <h2>¿Cuánto llevan<br>ahí paradas?</h2>
+  <p>Rellena el formulario. Si la oferta te encaja, vendemos. Si no, no pasa nada.</p>
+  <div class="cta-btn-group">
+    <a class="btn btn-w he" href="#formulario">Vender mis camisetas</a>
+    <a class="btn btn-wo he" href="https://wa.me/34600000000" target="_blank">WhatsApp directo</a>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="form-sec" id="formulario">
+  <div class="form-head rv">
+    <span class="s-lbl" style="margin-bottom:10px">Empieza aquí</span>
+    <h2>Cuéntanos<br>lo que tienes</h2>
+    <p style="margin-top:8px">2 minutos. Sin compromiso. Valoración en menos de 48 horas.</p>
+  </div>
+  <div class="prog" id="prg">
+    <div class="prog-d act" id="p0"></div>
+    <div class="prog-d" id="p1"></div>
+    <div class="prog-d" id="p2"></div>
+    <div class="prog-d" id="p3"></div>
+    <div class="prog-d" id="p4"></div>
+    <div class="prog-d" id="p5"></div>
+  </div>
+  <div id="tf">
+    <div class="tf-step on" id="s0">
+      <div class="tq"><span class="tq-n">1 de 6</span>¿Cómo te llamas?</div>
+      <input class="ti he" id="fn" type="text" placeholder="Tu nombre" autocomplete="off"/>
+      <div class="tn"><button class="tb he" onclick="nx(0)">Continuar</button><span class="t-hint">o Enter ↵</span></div>
+    </div>
+    <div class="tf-step" id="s1">
+      <div class="tq"><span class="tq-n">2 de 6</span>¿Tu WhatsApp?</div>
+      <input class="ti he" id="fw" type="tel" placeholder="600 000 000"/>
+      <p style="font-size:11px;color:var(--mid);margin-top:-14px;letter-spacing:-0.03em;font-weight:500">Solo te contactamos nosotros.</p>
+      <div class="tn"><button class="tb he" onclick="nx(1)">Continuar</button><span class="t-hint">o Enter ↵</span></div>
+    </div>
+    <div class="tf-step" id="s2">
+      <div class="tq"><span class="tq-n">3 de 6</span>¿Cuántas camisetas tienes?</div>
+      <div class="to-w">
+        <div class="to he" onclick="pk(this,'fc','1-3',2)"><span class="to-k">A</span>Una o dos</div>
+        <div class="to he" onclick="pk(this,'fc','4-10',2)"><span class="to-k">B</span>Entre 4 y 10</div>
+        <div class="to he" onclick="pk(this,'fc','10+',2)"><span class="to-k">C</span>Más de 10, un lote</div>
+      </div>
+    </div>
+    <div class="tf-step" id="s3">
+      <div class="tq"><span class="tq-n">4 de 6</span>¿Son originales?</div>
+      <div class="to-w">
+        <div class="to he" onclick="pk(this,'fo','Originales',3)"><span class="to-k">A</span>Sí, originales</div>
+        <div class="to he" onclick="pk(this,'fo','Réplicas',3)"><span class="to-k">B</span>Réplicas</div>
+        <div class="to he" onclick="pk(this,'fo','Mixto',3)"><span class="to-k">C</span>De las dos</div>
+        <div class="to he" onclick="pk(this,'fo','No sé',3)"><span class="to-k">D</span>Ni idea</div>
+      </div>
+    </div>
+    <div class="tf-step" id="s4">
+      <div class="tq"><span class="tq-n">5 de 6</span>¿En qué estado están?</div>
+      <div class="to-w">
+        <div class="to he" onclick="pk(this,'fe','Muy buen estado',4)"><span class="to-k">A</span>Muy bien, pocas veces usadas o sin estrenar</div>
+        <div class="to he" onclick="pk(this,'fe','Buen estado',4)"><span class="to-k">B</span>Buen estado, uso normal</div>
+        <div class="to he" onclick="pk(this,'fe','Irregular',4)"><span class="to-k">C</span>Unas mejor que otras</div>
+      </div>
+    </div>
+    <div class="tf-step" id="s5">
+      <div class="tq"><span class="tq-n">6 de 6</span>¿Algo más? (opcional)</div>
+      <input class="ti he" id="fno" type="text" placeholder="Equipo, temporada, dorsal…"/>
+      <div class="tn"><button class="tb he" onclick="sd()">Enviar →</button><span class="t-hint">o Enter ↵</span></div>
+    </div>
+  </div>
+  <div class="tsuc" id="suc">
+    <div class="tsuc-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h3>Recibido.</h3>
+    <p>En menos de 48 horas te escribimos por WhatsApp con nuestra valoración. Sin compromiso.</p>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-s rv" id="faq">
+  <div class="s-head">
+    <span class="s-lbl">Preguntas frecuentes</span>
+    <h2 class="s-h rv">Todo lo que<br>sueles preguntar</h2>
+  </div>
+  <div class="acc rv d1">
+    <div class="acc-i">
+      <div class="acc-head he" onclick="tog(this)">
+        <span class="acc-title">¿Compráis cualquier tipo de camiseta?</span>
+        <span class="acc-icon">+</span>
+      </div>
+      <div class="acc-body"><div class="acc-inner">Compramos camisetas de fútbol principalmente, tanto de clubes como de selecciones. Originales y réplicas. Si tienes dudas sobre lo que tienes, cuéntanoslo y miramos.</div></div>
+    </div>
+    <div class="acc-i">
+      <div class="acc-head he" onclick="tog(this)">
+        <span class="acc-title">¿Cómo sabéis cuánto vale mi camiseta?</span>
+        <span class="acc-icon">+</span>
+      </div>
+      <div class="acc-body"><div class="acc-inner">Llevamos años en el mercado y conocemos los precios reales. Miramos el equipo, la temporada, el estado, si tiene etiqueta original, si es firmada y otros factores. Te explicamos todo cuando te enviamos la oferta.</div></div>
+    </div>
+    <div class="acc-i">
+      <div class="acc-head he" onclick="tog(this)">
+        <span class="acc-title">¿Cuánto tiempo tardáis en responder?</span>
+        <span class="acc-icon">+</span>
+      </div>
+      <div class="acc-body"><div class="acc-inner">Máximo 48 horas. Normalmente menos. Te escribimos directamente por WhatsApp con la valoración y el precio que podemos ofrecerte.</div></div>
+    </div>
+    <div class="acc-i">
+      <div class="acc-head he" onclick="tog(this)">
+        <span class="acc-title">¿Tengo que enviar las camisetas antes de cobrar?</span>
+        <span class="acc-icon">+</span>
+      </div>
+      <div class="acc-body"><div class="acc-inner">No. Primero acordamos el precio. Si los dos estamos de acuerdo, entonces se organiza el envío o la entrega. Y se paga antes o en el momento de la entrega, no después.</div></div>
+    </div>
+    <div class="acc-i">
+      <div class="acc-head he" onclick="tog(this)">
+        <span class="acc-title">¿Qué pasa si no son lo que parecen en las fotos?</span>
+        <span class="acc-icon">+</span>
+      </div>
+      <div class="acc-body"><div class="acc-inner">Si al recibirlas el estado no corresponde con lo acordado, lo hablamos. Intentamos siempre llegar a un acuerdo justo para los dos. Por eso pedimos fotos detalladas antes de cerrar nada.</div></div>
+    </div>
+    <div class="acc-i">
+      <div class="acc-head he" onclick="tog(this)">
+        <span class="acc-title">¿Podemos vernos en persona?</span>
+        <span class="acc-icon">+</span>
+      </div>
+      <div class="acc-body"><div class="acc-inner">Sí. Si estás en Madrid, podemos quedar y ver las camisetas en persona. Es la forma más rápida de cerrar la operación y cobrar en el momento.</div></div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:44px">
+    <p style="font-size:14px;font-weight:700;letter-spacing:-0.05em;margin-bottom:16px">¿Tienes más dudas? Escríbenos directamente.</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <a class="btn btn-red he" href="#formulario">Vender mis camisetas</a>
+      <a class="btn btn-out he" href="https://wa.me/34600000000" target="_blank">WhatsApp directo</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo">Tackle</div>
+  <div class="f-r">© 2026 Tackle FC</div>
+</footer>
+
+<script>
+// CURSOR
+const cur=document.getElementById('cur');
+document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px'});
+document.querySelectorAll('.he,a,button,[onclick]').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cur.classList.add('h'));
+  el.addEventListener('mouseleave',()=>cur.classList.remove('h'));
+});
+
+// SCROLL REVEAL
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('v')}),{threshold:.06});
+document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
+
+// COUNT-UP
+const cntEl=document.getElementById('cnt');
+let counted=false;
+const cntObs=new IntersectionObserver(e=>{
+  if(e[0].isIntersecting&&!counted){
+    counted=true;
+    let n=0;const target=200;
+    const t=setInterval(()=>{
+      n=Math.min(n+4,target);
+      cntEl.innerHTML=n+'<sup>+</sup>';
+      if(n>=target)clearInterval(t);
+    },16);
+  }
+},{threshold:.3});
+cntObs.observe(cntEl);
+
+// ACCORDION
+function tog(head){
+  const item=head.closest('.acc-i');
+  const isOpen=item.classList.contains('open');
+  item.closest('.acc').querySelectorAll('.acc-i.open').forEach(i=>i.classList.remove('open'));
+  if(!isOpen)item.classList.add('open');
+}
+
+// FORM
+const fd={};
+function prog(s){
+  for(let i=0;i<6;i++){
+    const d=document.getElementById('p'+i);
+    d.className='prog-d';
+    if(i<s)d.classList.add('done');
+    else if(i===s)d.classList.add('act');
+  }
+}
+function nx(i){
+  if(i===0){const v=document.getElementById('fn').value.trim();if(!v){document.getElementById('fn').focus();return;}fd.nombre=v;}
+  if(i===1){const v=document.getElementById('fw').value.trim();if(!v){document.getElementById('fw').focus();return;}fd.whatsapp=v;}
+  const n=i+1;if(n>=6)return;
+  document.getElementById('s'+i).classList.remove('on');
+  document.getElementById('s'+n).classList.add('on');
+  prog(n);
+  const inp=document.querySelector('#s'+n+' .ti');
+  if(inp)setTimeout(()=>inp.focus(),60);
+}
+function pk(el,f,v,si){
+  el.closest('.to-w').querySelectorAll('.to').forEach(o=>o.classList.remove('on'));
+  el.classList.add('on');fd[f]=v;
+  setTimeout(()=>nx(si),270);
+}
+function sd(){
+  fd.nota=document.getElementById('fno').value.trim();
+  const msg=`Hola, quiero vender mis camisetas.\n\nNombre: ${fd.nombre||'-'}\nWhatsApp: ${fd.whatsapp||'-'}\nCantidad: ${fd.fc||'-'}\nOriginales: ${fd.fo||'-'}\nEstado: ${fd.fe||'-'}\nNota: ${fd.nota||'-'}`;
+  const wa='34600000000'; // ← PON EL NÚMERO REAL AQUÍ
+  document.getElementById('tf').style.display='none';
+  document.getElementById('prg').style.display='none';
+  document.getElementById('suc').classList.add('on');
+  setTimeout(()=>window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`,'_blank'),550);
+}
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;
+  const a=document.querySelector('.tf-step.on');if(!a)return;
+  const i=parseInt(a.id.replace('s',''));
+  if(i===5)sd();else nx(i);
+});
+</script>
+</body>
+</html>
